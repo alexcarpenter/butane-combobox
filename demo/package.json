@@ -1,0 +1,11 @@
+{
+  "name": "butane-combobox-demo",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx eleventy --serve --watch",
+    "build": "npx eleventy"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^0.9.0"
+  }
+}

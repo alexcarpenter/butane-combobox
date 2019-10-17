@@ -1,0 +1,5 @@
+node_modules
+dist/
+demo/_site
+demo/node_modules
+example

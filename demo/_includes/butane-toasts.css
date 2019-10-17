@@ -1,0 +1,157 @@
+:root {
+  --butane-toast-spacing: 1rem;
+  --butane-toast-padding: 1rem;
+  --butane-toast-background-color: #fff;
+  --butane-toast-border-color: #eee;
+  --butane-toast-text-color: #000;
+  --butane-toast-border-size: 1px;
+  --butane-toast-border-radius: 4px;
+}
+
+@keyframes ButaneToastEnterLeft {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+
+@keyframes ButaneToastEnterRight {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+
+@keyframes ButaneToastExitRight {
+  from {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes ButaneToastExitLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+.butane-toast-container {
+  position: fixed;
+
+}
+
+.butane-toast-container--top-right {
+  top: 1rem;
+  right: 1rem;
+}
+
+.butane-toast-container--top-left {
+  top: 1rem;
+  left: 1rem;
+}
+
+.butane-toast-container--bottom-left {
+  bottom: 1rem;
+  left: 1rem;
+}
+
+.butane-toast-container--bottom-right {
+  bottom: 1rem;
+  right: 1rem;
+}
+
+.butane-toast {
+  display: flex;
+  border: var(--butane-toast-border-size) solid var(--butane-toast-border-color);
+  border-radius: var(--butane-toast-border-radius);
+  background-color: var(--butane-toast-background-color);
+  color: var(--butane-toast-text-color);
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+  animation-fill-mode: forwards;
+}
+
+.butane-toast-container--top-right .butane-toast,
+.butane-toast-container--bottom-right .butane-toast {
+  animation-name: ButaneToastEnterLeft;
+}
+
+.butane-toast-container--top-left .butane-toast,
+.butane-toast-container--bottom-left .butane-toast {
+  animation-name: ButaneToastEnterRight;
+}
+
+.butane-toast-container--top-right .butane-toast--exit,
+.butane-toast-container--bottom-right .butane-toast--exit {
+  animation-name: ButaneToastExitRight;
+}
+
+.butane-toast-container--top-left .butane-toast--exit,
+.butane-toast-container--bottom-left .butane-toast--exit {
+  animation-name: ButaneToastExitLeft;
+}
+
+.butane-toast--success {
+  --butane-toast-background-color: #d4edda;
+  --butane-toast-border-color: #c3e6cb;
+  --butane-toast-text-color: #155724;
+}
+
+.butane-toast--error {
+  --butane-toast-background-color: #f8d7da;
+  --butane-toast-border-color: #f5c6cb;
+  --butane-toast-text-color: #721c24;
+}
+
+.butane-toast--warning {
+  --butane-toast-background-color: #fff3cd;
+  --butane-toast-border-color: #ffeeba;
+  --butane-toast-text-color: #856404;
+}
+
+.butane-toast--notice {
+  --butane-toast-background-color: #cce5ff;
+  --butane-toast-border-color: #b8daff;
+  --butane-toast-text-color: #004085;
+}
+
+.butane-toast + .butane-toast {
+  margin-top: var(--butane-toast-spacing);
+}
+
+.butane-toast__message {
+  padding: var(--butane-toast-padding);
+  font: inherit;
+}
+
+.butane-toast__dismiss {
+  margin-left: auto;
+  padding: var(--butane-toast-padding);
+  background-color: var(--butane-toast-background-color);
+  color: var(--butane-toast-text-color);
+  border: 0;
+  border-left: var(--butane-toast-border-size) solid var(--butane-toast-border-color);
+  font: inherit;
+  cursor: pointer;
+}

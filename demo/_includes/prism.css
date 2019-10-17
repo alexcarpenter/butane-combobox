@@ -1,0 +1,45 @@
+code,
+pre {
+  font-family: var(--font-family-code);
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Inline code */
+code:not([class]) {
+  padding: 2px;
+  font-family: var(--font-family-code);
+  background-color: var(--color-gray-300);
+  border-radius: var(--border-radius);
+}
+
+/* Code blocks */
+pre {
+  padding: 1em;
+  overflow: auto;
+  background-color: var(--color-gray-900);
+  color: var(--color-gray-100);
+  border-radius: var(--border-radius);
+}
+
+
+.highlight-line {
+  padding: 0.25rem 1rem;
+}
+
+.highlight-line-active {
+  background-color: var(--color-blue-light);
+}

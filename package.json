@@ -1,0 +1,32 @@
+{
+  "name": "butane-combobox",
+  "version": "1.0.0-1",
+  "description": "A small library for creating an combobox input",
+  "main": "dist/butane-combobox.cjs.js",
+  "module": "dist/butane-combobox.esm.js",
+  "browser": "dist/butane-combobox.umd.js",
+  "scripts": {
+    "build": "rollup -c && npm run cp:css",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "test:watch": "jest --watch ./src/**/*.js",
+    "cp:css": "cp src/index.css dist/butane-comboboxs.css",
+    "cp:demo": "cp dist/butane-combobox.umd.js demo/_includes/butane-comboboxs.js && cp src/index.css demo/_includes/butane-comboboxs.css"
+  },
+  "author": "alexcarpenter",
+  "license": "MIT",
+  "devDependencies": {
+    "@testing-library/dom": "^6.7.1",
+    "@testing-library/jest-dom": "^4.1.2",
+    "jest": "^24.9.0",
+    "rollup": "^1.23.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  },
+  "dependencies": {
+    "match-sorter": "^4.0.2"
+  },
+  "files": [
+    "dist"
+  ]
+}
