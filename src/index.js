@@ -1,5 +1,5 @@
 import matchSorter from 'match-sorter';
-import { debounce, wrap, visuallyHide, setAttributes, keyCodes } from './utils';
+import { visuallyHide, setAttributes } from './utils';
 
 class ButaneCombobox {
   constructor(container, options) {
@@ -13,8 +13,10 @@ class ButaneCombobox {
     };
     this.label = this.container.querySelector('label');
     this.select = this.container.querySelector('select');
-    if (!this.select) throw new Error('ButaneCombobox requires a label element');
-    if (!this.select) throw new Error('ButaneCombobox requires a select element');
+    if (!this.select)
+      throw new Error('ButaneCombobox requires a label element');
+    if (!this.select)
+      throw new Error('ButaneCombobox requires a select element');
     this.init();
   }
 
@@ -32,30 +34,56 @@ class ButaneCombobox {
     this.addEventListeners();
   }
 
+  get menuIsVisible() {
+    return this.list.getAttribute('hidden') ? false : true;
+  }
+
   addEventListeners() {
-    document.addEventListener(
-      'click',
-      event => {
-        const target = event.target;
+    document.addEventListener('click', e => this.handleClicks(e), false);
+    document.addEventListener('keydown', e => this.handleKeydown(e), false);
+    document.addEventListener('input', e => this.handleInput(e), false);
+  }
 
-        if (!target.closest('[data-butane-combobox]')) {
-          return;
-        }
+  handleClicks(e) {
+    if (!e.target.closest('[data-butane-combobox]') && this.menuIsVisible) {
+      this.hideMenu();
+    }
 
-        if (target.closest(`[data-butane-combobox-option]`)) {
-          this.setSelectedOption(target);
-          this.setInputValue(target.innerText);
-        }
-      },
-      false,
-    );
-    this.input.addEventListener('input', event => this.renderMenuItems(event), false);
+    if (
+      e.target.closest('[data-butane-combobox-input]') &&
+      this.config.openOnFocus
+    ) {
+      this.showMenu();
+    }
+
+    if (e.target.closest('[data-butane-combobox-option]')) {
+      this.input.value = e.target.innerText;
+      this.hideMenu();
+    }
+  }
+
+  handleKeydown(e) {
+    if (e.key === 'Escape' && this.menuIsVisible) {
+      this.hideMenu();
+    }
+
+    if (
+      e.target.closest('[data-butane-combobox-input]') &&
+      e.key === 'ArrowDown' &&
+      !this.menuIsVisible
+    ) {
+      this.showMenu();
+    }
+  }
+
+  handleInput(e) {
+    this.renderMenuItems(e);
   }
 
   createInput() {
     this.input = document.createElement('input');
     setAttributes(this.input, {
-      'data-butante-combobox-input': '',
+      'data-butane-combobox-input': '',
       id: this.id,
       type: 'text',
       autocapitalize: 'none',
@@ -76,7 +104,7 @@ class ButaneCombobox {
       role: 'listbox',
       id: `butane-combobox-${this.id}`,
     });
-    // this.list.setAttribute('hidden', 'true');
+    this.list.setAttribute('hidden', 'true');
     this.status = document.createElement('div');
     setAttributes(this.status, {
       'data-butane-combobox-status': '',
@@ -89,6 +117,7 @@ class ButaneCombobox {
   }
 
   showMenu() {
+    this.renderMenuItems();
     this.input.setAttribute('aria-expanded', 'true');
     this.list.removeAttribute('hidden');
   }
@@ -100,7 +129,9 @@ class ButaneCombobox {
 
   setSelectedOption(option) {
     option.setAttribute('aria-selected', 'true');
-    if (this.config.onSelectedOption) this.config.onSelectedOption(option.innerText);
+    if (this.config.onSelectedOption) {
+      this.config.onSelectedOption(option.innerText);
+    }
   }
 
   setInputValue(value) {
@@ -117,10 +148,12 @@ class ButaneCombobox {
 
   getDefaultOptions() {
     this.defaultOptions = [];
-    Array.from(this.select.options).forEach(option => this.defaultOptions.push(option.label));
+    Array.from(this.select.options).forEach(option => {
+      this.defaultOptions.push(option.label);
+    });
   }
 
-  noResultsTemplate() {
+  noOptionsTemplate() {
     return `<li>No results found.</li>`;
   }
 
@@ -130,11 +163,16 @@ class ButaneCombobox {
 
   renderMenuItems(event) {
     this.filteredOptions = this.defaultOptions;
-    this.filteredOptions = matchSorter(this.defaultOptions, event ? event.target.value : '');
+    this.filteredOptions = matchSorter(
+      this.defaultOptions,
+      event ? event.target.value : '',
+    );
     if (this.filteredOptions.length) {
-      this.list.innerHTML = this.filteredOptions.map(option => this.optionTemplate(option)).join('');
+      this.list.innerHTML = this.filteredOptions
+        .map(option => this.optionTemplate(option))
+        .join('');
     } else {
-      this.list.innerHTML = this.noResultsTemplate();
+      this.list.innerHTML = this.noOptionsTemplate();
     }
     this.updateStatus();
   }
