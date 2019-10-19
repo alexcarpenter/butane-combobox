@@ -28,22 +28,27 @@ class ButaneCombobox {
     this.id = this.label.getAttribute('for');
     this.wrapper = document.createElement('div');
     this.wrapper.setAttribute('data-butane-combobox', '');
-    this.container.appendChild(this.wrapper);
     this.getDefaultOptions();
     this.createInput();
-    this.createMenu();
-    this.renderMenuItems();
+    this.createList();
+    this.createStatus();
+    this.container.appendChild(this.wrapper);
+    this.wrapper.appendChild(this.input);
+    this.wrapper.appendChild(this.list);
+    this.wrapper.appendChild(this.status);
     this.addEventListeners();
-  }
-
-  get menuIsVisible() {
-    return this.list.getAttribute('hidden') ? false : true;
   }
 
   addEventListeners() {
     document.addEventListener('click', e => this.handleClicks(e), false);
     document.addEventListener('keydown', e => this.handleKeydown(e), false);
     document.addEventListener('input', e => this.handleInput(e), false);
+  }
+
+  removeEventListeners() {
+    document.removeEventListener('click', e => this.handleClicks(e), false);
+    document.removeEventListener('keydown', e => this.handleKeydown(e), false);
+    document.removeEventListener('input', e => this.handleInput(e), false);
   }
 
   handleClicks(e) {
@@ -59,23 +64,55 @@ class ButaneCombobox {
     }
 
     if (e.target.closest('[data-butane-combobox-option]')) {
-      this.input.value = e.target.innerText;
       this.setSelectedOption(e.target);
       this.hideMenu();
+      this.input.focus();
     }
   }
 
   handleKeydown(e) {
-    if (e.key === 'Escape' && this.menuIsVisible) {
+    if (e.code === 'Escape' && this.menuIsVisible) {
       this.hideMenu();
+      this.input.focus();
     }
 
     if (
       e.target.closest('[data-butane-combobox-input]') &&
-      e.key === 'ArrowDown' &&
+      e.code === 'ArrowDown' &&
       !this.menuIsVisible
     ) {
+      e.preventDefault();
       this.showMenu();
+      this.focusFirstOption();
+    }
+
+    if (
+      e.target.closest('[data-butane-combobox-option]') &&
+      e.code === 'ArrowDown' &&
+      this.menuIsVisible
+    ) {
+      e.preventDefault();
+      this.focusNextOption(e.target);
+    }
+
+    if (
+      e.target.closest('[data-butane-combobox-option]') &&
+      e.code === 'ArrowUp' &&
+      this.menuIsVisible
+    ) {
+      e.preventDefault();
+      this.focusPreviousOption(e.target);
+    }
+
+    if (
+      e.target.closest('[data-butane-combobox-option]') &&
+      (e.code === 'Enter' || e.code === 'Space') &&
+      this.menuIsVisible
+    ) {
+      e.preventDefault();
+      this.setSelectedOption(e.target);
+      this.hideMenu();
+      this.input.focus();
     }
   }
 
@@ -97,10 +134,9 @@ class ButaneCombobox {
     });
     const selectedVal = this.select.options[this.select.selectedIndex].value;
     if (selectedVal.length > 0) this.input.value = selectedVal;
-    this.wrapper.appendChild(this.input);
   }
 
-  createMenu() {
+  createList() {
     this.list = document.createElement('ul');
     setAttributes(this.list, {
       'data-butane-combobox-list': '',
@@ -108,6 +144,9 @@ class ButaneCombobox {
       id: `butane-combobox-${this.id}`,
     });
     this.list.setAttribute('hidden', 'true');
+  }
+
+  createStatus() {
     this.status = document.createElement('div');
     setAttributes(this.status, {
       'data-butane-combobox-status': '',
@@ -115,8 +154,6 @@ class ButaneCombobox {
       role: 'status',
     });
     visuallyHide(this.status);
-    this.wrapper.appendChild(this.list);
-    this.wrapper.appendChild(this.status);
   }
 
   showMenu() {
@@ -138,8 +175,33 @@ class ButaneCombobox {
 
   setSelectedOption(option) {
     option.setAttribute('aria-selected', 'true');
+    this.input.value = option.innerText;
     if (this.config.onSelectedOption) {
       this.config.onSelectedOption(option);
+    }
+  }
+
+  focusFirstOption() {
+    this.list.firstChild.focus();
+  }
+
+  focusLastOption() {
+    this.list.lastChild.focus();
+  }
+
+  focusNextOption(currentEl) {
+    if (currentEl.nextElementSibling !== null) {
+      currentEl.nextElementSibling.focus();
+    } else {
+      this.focusFirstOption();
+    }
+  }
+
+  focusPreviousOption(currentEl) {
+    if (currentEl.previousElementSibling !== null) {
+      currentEl.previousElementSibling.focus();
+    } else {
+      this.focusLastOption();
     }
   }
 
@@ -184,6 +246,10 @@ class ButaneCombobox {
       this.list.innerHTML = this.noOptionsTemplate();
     }
     this.updateStatus();
+  }
+
+  get menuIsVisible() {
+    return this.list.getAttribute('hidden') ? false : true;
   }
 }
 
