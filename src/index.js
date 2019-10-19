@@ -8,6 +8,8 @@ class ButaneCombobox {
       ...{
         openOnFocus: false,
         onSelectedOption: () => {},
+        onShowMenu: () => {},
+        onHideMenu: () => {},
       },
       ...options,
     };
@@ -58,6 +60,7 @@ class ButaneCombobox {
 
     if (e.target.closest('[data-butane-combobox-option]')) {
       this.input.value = e.target.innerText;
+      this.setSelectedOption(e.target);
       this.hideMenu();
     }
   }
@@ -120,17 +123,23 @@ class ButaneCombobox {
     this.renderMenuItems();
     this.input.setAttribute('aria-expanded', 'true');
     this.list.removeAttribute('hidden');
+    if (this.config.onShowMenu) {
+      this.config.onShowMenu();
+    }
   }
 
   hideMenu() {
     this.input.setAttribute('aria-expanded', 'false');
     this.list.setAttribute('hidden', 'true');
+    if (this.config.onHideMenu) {
+      this.config.onHideMenu();
+    }
   }
 
   setSelectedOption(option) {
     option.setAttribute('aria-selected', 'true');
     if (this.config.onSelectedOption) {
-      this.config.onSelectedOption(option.innerText);
+      this.config.onSelectedOption(option);
     }
   }
 
