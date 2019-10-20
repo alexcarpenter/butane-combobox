@@ -163,7 +163,7 @@ button {
   top: 100%;
   left: 0;
   min-width: 100%;
-  max-height: 440px;
+  max-height: 352px;
   overflow-y: scroll;
   background-color: #fff;
   border: 1px solid var(--color-gray-300);
@@ -172,6 +172,7 @@ button {
 [data-butane-combobox-option] {
   padding: .75rem;
   cursor: pointer;
+  outline: none;
 }
 
 [data-butane-combobox-option]:not(:last-of-type) {

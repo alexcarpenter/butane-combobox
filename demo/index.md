@@ -27,9 +27,11 @@ const element = document.querySelector('.combobox');
 new ButaneCombobox(element);
 ```
 
-## API
+## Options
 
 ### openOnFocus
+
+When the input is focused, show options list immediately.
 
 ```js
 new ButaneCombobox(element, {
@@ -39,6 +41,8 @@ new ButaneCombobox(element, {
 
 ### onSelectedOption
 
+Returns the selected option.
+
 ```js
 new ButaneCombobox(element, {
   onSelectOption: option => console.log(option),
@@ -47,6 +51,8 @@ new ButaneCombobox(element, {
 
 ### onShowMenu
 
+Callback for when the menu is shown.
+
 ```js
 new ButaneCombobox(element, {
   onShowMenu: () => console.log('Menu shown'),
@@ -54,6 +60,8 @@ new ButaneCombobox(element, {
 ```
 
 ### onHideMenu
+
+Callback for when the menu is hidden.
 
 ```js
 new ButaneCombobox(element, {
