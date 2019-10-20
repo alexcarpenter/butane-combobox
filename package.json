@@ -6,12 +6,13 @@
   "module": "dist/butane-combobox.esm.js",
   "browser": "dist/butane-combobox.umd.js",
   "scripts": {
-    "build": "rollup -c && npm run cp:css",
+    "build": "rollup -c && npm run cp:demo",
     "dev": "rollup -c -w",
     "test": "jest",
     "test:watch": "jest --watch ./src/**/*.js",
-    "cp:css": "cp src/index.css dist/butane-comboboxs.css",
-    "cp:demo": "cp dist/butane-combobox.umd.js demo/_includes/butane-comboboxs.js && cp src/index.css demo/_includes/butane-comboboxs.css"
+    "cp:css": "cp src/index.css demo/_includes/butane-combobox.css",
+    "cp:js": "cp dist/butane-combobox.umd.js demo/_includes/butane-combobox.js",
+    "cp:demo": "npm run cp:css && npm run cp:js"
   },
   "author": "alexcarpenter",
   "license": "MIT",

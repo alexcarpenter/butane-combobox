@@ -8,7 +8,7 @@
   <meta name="description" content="{{ site.description }}">
   <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono|IBM+Plex+Sans:400,700&display=swap" rel="stylesheet">
   <style>
-    {% include "butane-combobox.css" %}
+    {# {% include "butane-combobox.css" %} #}
     {% include "site.css" %}
     {% include "prism.css" %}
   </style>
@@ -16,6 +16,7 @@
 <body>
   {% include "header.njk" %}
   <main>
+    {% include "example.njk" %}
     {{ content | safe }}
   </main>
   {% include "footer.njk" %}
