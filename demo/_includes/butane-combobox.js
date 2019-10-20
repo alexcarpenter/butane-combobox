@@ -1048,11 +1048,10 @@
 
       if (
         e.target.closest('[data-butane-combobox-input]') &&
-        e.code === 'ArrowDown' &&
-        !this.menuIsVisible
+        e.code === 'ArrowDown'
       ) {
         e.preventDefault();
-        this.showMenu();
+        if (!this.menuIsVisible) this.showMenu();
         this.focusFirstOption();
       }
 
@@ -1087,7 +1086,11 @@
     }
 
     handleInput(e) {
-      this.renderMenuItems(e);
+      if (this.menuIsVisible) {
+        this.renderMenuItems(e);
+      } else {
+        this.showMenu();
+      }
     }
 
     createInput() {

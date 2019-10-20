@@ -42,7 +42,8 @@ a:hover {
   text-decoration: underline;
 }
 
-pre, code {
+pre,
+code {
   font-family: var(--font-family-mono);
   line-height: 1.5;
 }
@@ -68,11 +69,11 @@ footer {
   border-top: 1px solid var(--color-gray-300);
 }
 
-main > * + * {
+main>*+* {
   margin-top: 1rem;
 }
 
-main > * + h2 {
+main>*+h2 {
   margin-top: 2rem;
 }
 
@@ -113,7 +114,7 @@ input {
   font-size: inherit;
 }
 
-input + small {
+input+small {
   display: block;
   margin-top: .25rem;
   color: var(--color-gray-500);
@@ -126,7 +127,7 @@ select {
   padding: .75rem;
   appearance: none;
   -moz-appearance: none;
-	-webkit-appearance: none;
+  -webkit-appearance: none;
   font: inherit;
   border: 1px solid #EFEFEF;
   background-color: #FAFAFA;
@@ -149,4 +150,41 @@ button {
   border-radius: 4px;
   border: 0;
   color: #fff;
+}
+
+/* Combobox styling */
+[data-butane-combobox] {
+  position: relative;
+}
+
+[data-butane-combobox-list] {
+  list-style: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 100%;
+  max-height: 440px;
+  overflow-y: scroll;
+  background-color: #fff;
+  border: 1px solid var(--color-gray-300);
+}
+
+[data-butane-combobox-option] {
+  padding: .75rem;
+  cursor: pointer;
+}
+
+[data-butane-combobox-option]:not(:last-of-type) {
+  border-bottom: 1px solid var(--color-gray-300);
+}
+
+[data-butane-combobox-option]:hover,
+[data-butane-combobox-option]:focus {
+  background-color: var(--color-blue);
+  color: #fff;
+}
+
+[data-butane-combobox-list] li:not([data-butane-combobox-option]) {
+  padding: .75rem;
+  text-align: center;
 }
