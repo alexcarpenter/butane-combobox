@@ -15,7 +15,10 @@
 <body>
   {% include "header.njk" %}
   <main>
-    {% include "example.njk" %}
+    <div class="example">
+      <h2 class="example__label">Example</h2>
+      {% include "example.njk" %}
+    </div>
     {{ content | safe }}
   </main>
   {% include "footer.njk" %}

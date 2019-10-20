@@ -77,13 +77,13 @@ main>*+h2 {
   margin-top: 2rem;
 }
 
-h2 {
+h2:not([class]) {
   margin-bottom: 2rem;
   padding-top: 2rem;
   border-top: 1px solid var(--color-gray-300);
 }
 
-h2::after {
+h2:not([class])::after {
   content: '\2009\00AC';
   display: inline-block;
   color: var(--color-gray-400);
@@ -150,6 +150,28 @@ button {
   border-radius: 4px;
   border: 0;
   color: #fff;
+}
+
+.example {
+  position: relative;
+  padding: 2rem;
+  border: 1px solid var(--color-green);
+  border-radius: var(--border-radius);
+}
+
+.example__label {
+  position: absolute;
+  top: 0;
+  left: 1.5rem;
+  transform: translateY(-50%);
+  padding-left: .5rem;
+  padding-right: .5rem;
+  font-size: 1rem;
+  font-weight: 400;
+  background-color: #fff;
+  color: var(--color-green);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Combobox styling */
