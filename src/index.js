@@ -132,8 +132,12 @@ class ButaneCombobox {
       'aria-autocomplete': 'list',
       'aria-owns': `butane-combobox-${this.id}`,
     });
-    const selectedVal = this.select.options[this.select.selectedIndex].value;
-    if (selectedVal.length > 0) this.input.value = selectedVal;
+    const selectedIndex = this.select.options[this.select.selectedIndex];
+    if (selectedIndex.hasAttribute('selected')) {
+      this.input.value = selectedIndex.innerText;
+    } else {
+      this.select.value = '';
+    }
   }
 
   createList() {
@@ -174,8 +178,16 @@ class ButaneCombobox {
   }
 
   setSelectedOption(option) {
-    option.setAttribute('aria-selected', 'true');
+    Array.from(this.list.children).forEach(child =>
+      child.setAttribute('aria-selected', child === option ? 'true' : 'false'),
+    );
     this.input.value = option.innerText;
+    this.select.value = option.innerText;
+    this.select
+      .querySelector(
+        `[value="${option.getAttribute('data-butane-combobox-option-value')}"]`,
+      )
+      .setAttribute('selected', 'true');
     if (this.config.onSelectedOption) {
       this.config.onSelectedOption(option);
     }
@@ -220,7 +232,7 @@ class ButaneCombobox {
   getDefaultOptions() {
     this.defaultOptions = [];
     Array.from(this.select.options).forEach(option => {
-      this.defaultOptions.push(option.label);
+      this.defaultOptions.push(option);
     });
   }
 
@@ -229,7 +241,11 @@ class ButaneCombobox {
   }
 
   optionTemplate(option) {
-    return `<li data-butane-combobox-option tabindex="-1" aria-selected="false" role="option">${option}</li>`;
+    return `<li data-butane-combobox-option tabindex="-1" aria-selected="${
+      this.input.value === option.innerText ? true : false
+    }" role="option" data-butane-combobox-option-value="${option.value}">${
+      option.label
+    }</li>`;
   }
 
   renderMenuItems(event) {
@@ -237,6 +253,9 @@ class ButaneCombobox {
     this.filteredOptions = matchSorter(
       this.defaultOptions,
       event ? event.target.value : '',
+      {
+        keys: ['label'],
+      },
     );
     if (this.filteredOptions.length) {
       this.list.innerHTML = this.filteredOptions
