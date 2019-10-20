@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-$ npm install butane-combobox
+$ npm install butane-combobox --save
 ```
 
 ## Usage
