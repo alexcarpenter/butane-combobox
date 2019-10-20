@@ -1,6 +1,6 @@
 # butane-combobox
 
-> An accessible lightweight combobox library
+> An accessible combobox/autocomplete library
 
 ## Install
 

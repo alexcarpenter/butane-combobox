@@ -1,7 +1,7 @@
 {
   "name": "butane-combobox",
   "version": "1.0.0-2",
-  "description": "An accessible lightweight combobox library",
+  "description": "An accessible combobox/autocomplete library",
   "main": "dist/butane-combobox.cjs.js",
   "module": "dist/butane-combobox.esm.js",
   "browser": "dist/butane-combobox.umd.js",
