@@ -45,12 +45,6 @@ class ButaneCombobox {
     document.addEventListener('input', e => this.handleInput(e), false);
   }
 
-  removeEventListeners() {
-    document.removeEventListener('click', e => this.handleClicks(e), false);
-    document.removeEventListener('keydown', e => this.handleKeydown(e), false);
-    document.removeEventListener('input', e => this.handleInput(e), false);
-  }
-
   handleClicks(e) {
     if (!e.target.closest('[data-butane-combobox]') && this.menuIsVisible) {
       this.hideMenu();
@@ -112,6 +106,10 @@ class ButaneCombobox {
       this.setSelectedOption(e.target);
       this.hideMenu();
       this.input.focus();
+    }
+
+    if (e.code === 'Tab' && this.menuIsVisible) {
+      this.hideMenu();
     }
   }
 
