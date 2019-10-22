@@ -36,13 +36,34 @@ class ButaneCombobox {
     this.wrapper.appendChild(this.input);
     this.wrapper.appendChild(this.list);
     this.wrapper.appendChild(this.status);
+    this.handleClicks = this.handleClicks.bind(this);
+    this.handleKeydown = this.handleKeydown.bind(this);
+    this.handleInput = this.handleInput.bind(this);
     this.addEventListeners();
   }
 
+  dispose() {
+    this.removeEventListeners();
+    this.wrapper.removeChild(this.input);
+    this.wrapper.removeChild(this.list);
+    this.wrapper.removeChild(this.status);
+    this.container.removeChild(this.wrapper);
+    this.select.removeAttribute('style');
+    this.select.removeAttribute('aria-hidden');
+    this.select.removeAttribute('tabindex');
+    this.select.setAttribute('id', this.id);
+  }
+
   addEventListeners() {
-    document.addEventListener('click', e => this.handleClicks(e), false);
-    document.addEventListener('keydown', e => this.handleKeydown(e), false);
-    document.addEventListener('input', e => this.handleInput(e), false);
+    document.addEventListener('click', this.handleClicks, false);
+    document.addEventListener('keydown', this.handleKeydown, false);
+    document.addEventListener('input', this.handleInput, false);
+  }
+
+  removeEventListeners() {
+    document.removeEventListener('click', this.handleClicks, false);
+    document.removeEventListener('keydown', this.handleKeydown, false);
+    document.removeEventListener('input', this.handleInput, false);
   }
 
   handleClicks(e) {
@@ -115,7 +136,7 @@ class ButaneCombobox {
 
   handleInput(e) {
     if (this.menuIsVisible) {
-      this.renderMenuItems(e);
+      this.renderMenuItems();
     } else {
       this.showMenu();
     }
@@ -249,15 +270,11 @@ class ButaneCombobox {
     }</li>`;
   }
 
-  renderMenuItems(event) {
+  renderMenuItems() {
     this.filteredOptions = this.defaultOptions;
-    this.filteredOptions = matchSorter(
-      this.defaultOptions,
-      event ? event.target.value : '',
-      {
-        keys: ['label'],
-      },
-    );
+    this.filteredOptions = matchSorter(this.defaultOptions, this.input.value, {
+      keys: ['label'],
+    });
     if (this.filteredOptions.length) {
       this.list.innerHTML = this.filteredOptions
         .map(option => this.optionTemplate(option))
