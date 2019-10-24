@@ -1,9 +1,5 @@
 const ButaneCombobox = require('../..');
-const {
-  fireEvent,
-  getByLabelText,
-  getByRole,
-} = require('@testing-library/dom');
+const { fireEvent, getByLabelText, getByRole } = require('@testing-library/dom');
 require('@testing-library/jest-dom/extend-expect');
 
 let testCombobox;
@@ -69,7 +65,7 @@ function setupExampleDOM() {
   `;
   document.body.appendChild(combobox);
   testCombobox = new ButaneCombobox(combobox, {
-    openOnFocus: true,
+    showOnClick: true,
   });
 }
 
@@ -89,7 +85,7 @@ test('renders list options on click', () => {
 
 test('filters options based on user input', () => {
   fireEvent.input(getByLabelText(document.body, 'Search states'), {
-    target: { value: 'z' },
+    target: { value: 'm' },
   });
   expect(getByRole(document.body, 'listbox').children.length).toEqual(1);
 });

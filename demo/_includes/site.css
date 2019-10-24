@@ -207,6 +207,19 @@ button {
   color: #fff;
 }
 
+[data-butane-combobox-option][aria-selected="true"] {
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4gIDxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDBoMjR2MjRIMHoiLz4gIDxwYXRoIGQ9Ik05IDE2LjJMNC44IDEybC0xLjQgMS40TDkgMTkgMjEgN2wtMS40LTEuNEw5IDE2LjJ6Ii8+PC9zdmc+');
+  background-size: 16px;
+  background-repeat: no-repeat;
+  background-position: right .75rem top 50%, 0 0;
+}
+
+[data-butane-combobox-option]:hover[aria-selected="true"],
+[data-butane-combobox-option]:focus[aria-selected="true"] {
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxNCIgdmlld0JveD0iMCAwIDE4IDE0Ij4gIDxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTMgLTUpIj4gICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIvPiAgICA8cGF0aCBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik05IDE2LjJMNC44IDEybC0xLjQgMS40TDkgMTkgMjEgN2wtMS40LTEuNHoiLz4gIDwvZz48L3N2Zz4=');
+  background-size: 16px;
+}
+
 [data-butane-combobox-list] li:not([data-butane-combobox-option]) {
   padding: .75rem;
   text-align: center;

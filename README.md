@@ -30,13 +30,13 @@ new ButaneCombobox(element);
 
 ## Options
 
-### openOnFocus
+### showOnClick
 
-When the input is focused, show options list immediately.
+When the input is clicked, show options list immediately.
 
 ```js
 new ButaneCombobox(element, {
-  openOnFocus: true,
+  showOnClick: true,
 });
 ```
 

@@ -6,7 +6,7 @@ class ButaneCombobox {
     this.container = container;
     this.config = {
       ...{
-        openOnFocus: false,
+        showOnClick: false,
         onSelectedOption: () => {},
         onShowMenu: () => {},
         onHideMenu: () => {},
@@ -15,43 +15,71 @@ class ButaneCombobox {
     };
     this.label = this.container.querySelector('label');
     this.select = this.container.querySelector('select');
-    if (!this.select)
-      throw new Error('ButaneCombobox requires a label element');
-    if (!this.select)
-      throw new Error('ButaneCombobox requires a select element');
-    this.init();
-  }
-
-  init() {
-    visuallyHide(this.select);
-    this.select.removeAttribute('id');
     this.id = this.label.getAttribute('for');
     this.wrapper = document.createElement('div');
     this.wrapper.setAttribute('data-butane-combobox', '');
-    this.getDefaultOptions();
+    this.container.appendChild(this.wrapper);
+    this.hideSelect();
     this.createInput();
     this.createList();
     this.createStatus();
-    this.container.appendChild(this.wrapper);
-    this.wrapper.appendChild(this.input);
-    this.wrapper.appendChild(this.list);
-    this.wrapper.appendChild(this.status);
     this.handleClicks = this.handleClicks.bind(this);
     this.handleKeydown = this.handleKeydown.bind(this);
     this.handleInput = this.handleInput.bind(this);
+    this.getDefaultOptions();
     this.addEventListeners();
   }
 
-  dispose() {
-    this.removeEventListeners();
-    this.wrapper.removeChild(this.input);
-    this.wrapper.removeChild(this.list);
-    this.wrapper.removeChild(this.status);
-    this.container.removeChild(this.wrapper);
-    this.select.removeAttribute('style');
-    this.select.removeAttribute('aria-hidden');
-    this.select.removeAttribute('tabindex');
-    this.select.setAttribute('id', this.id);
+  get menuIsVisible() {
+    return this.list.getAttribute('hidden') ? false : true;
+  }
+
+  hideSelect() {
+    visuallyHide(this.select);
+    this.select.removeAttribute('id');
+  }
+
+  createInput() {
+    this.input = document.createElement('input');
+    setAttributes(this.input, {
+      'data-butane-combobox-input': '',
+      'id': this.id,
+      'type': 'text',
+      'autocapitalize': 'none',
+      'autocomplete': 'off',
+      'role': 'combobox',
+      'aria-autocomplete': 'list',
+      'aria-owns': `butane-combobox-${this.id}`,
+    });
+    const selectedIndex = this.select.options[this.select.selectedIndex];
+    if (selectedIndex.hasAttribute('selected')) {
+      this.input.value = selectedIndex.innerText;
+    } else {
+      this.select.value = '';
+    }
+    this.wrapper.appendChild(this.input);
+  }
+
+  createList() {
+    this.list = document.createElement('ul');
+    setAttributes(this.list, {
+      'data-butane-combobox-list': '',
+      'role': 'listbox',
+      'id': `butane-combobox-${this.id}`,
+    });
+    this.list.setAttribute('hidden', 'true');
+    this.wrapper.appendChild(this.list);
+  }
+
+  createStatus() {
+    this.status = document.createElement('div');
+    setAttributes(this.status, {
+      'data-butane-combobox-status': '',
+      'aria-live': 'polite',
+      'role': 'status',
+    });
+    this.wrapper.appendChild(this.status);
+    visuallyHide(this.status);
   }
 
   addEventListeners() {
@@ -71,10 +99,7 @@ class ButaneCombobox {
       this.hideMenu();
     }
 
-    if (
-      e.target.closest('[data-butane-combobox-input]') &&
-      this.config.openOnFocus
-    ) {
+    if (e.target.closest('[data-butane-combobox-input]') && this.config.showOnClick) {
       this.showMenu();
     }
 
@@ -85,56 +110,7 @@ class ButaneCombobox {
     }
   }
 
-  handleKeydown(e) {
-    if (e.code === 'Escape' && this.menuIsVisible) {
-      this.hideMenu();
-      this.input.focus();
-    }
-
-    if (
-      e.target.closest('[data-butane-combobox-input]') &&
-      e.code === 'ArrowDown'
-    ) {
-      e.preventDefault();
-      if (!this.menuIsVisible) this.showMenu();
-      this.focusFirstOption();
-    }
-
-    if (
-      e.target.closest('[data-butane-combobox-option]') &&
-      e.code === 'ArrowDown' &&
-      this.menuIsVisible
-    ) {
-      e.preventDefault();
-      this.focusNextOption(e.target);
-    }
-
-    if (
-      e.target.closest('[data-butane-combobox-option]') &&
-      e.code === 'ArrowUp' &&
-      this.menuIsVisible
-    ) {
-      e.preventDefault();
-      this.focusPreviousOption(e.target);
-    }
-
-    if (
-      e.target.closest('[data-butane-combobox-option]') &&
-      (e.code === 'Enter' || e.code === 'Space') &&
-      this.menuIsVisible
-    ) {
-      e.preventDefault();
-      this.setSelectedOption(e.target);
-      this.hideMenu();
-      this.input.focus();
-    }
-
-    if (e.code === 'Tab' && this.menuIsVisible) {
-      this.hideMenu();
-    }
-  }
-
-  handleInput(e) {
+  handleInput() {
     if (this.menuIsVisible) {
       this.renderMenuItems();
     } else {
@@ -142,61 +118,78 @@ class ButaneCombobox {
     }
   }
 
-  createInput() {
-    this.input = document.createElement('input');
-    setAttributes(this.input, {
-      'data-butane-combobox-input': '',
-      id: this.id,
-      type: 'text',
-      autocapitalize: 'none',
-      autocomplete: 'off',
-      role: 'combobox',
-      'aria-autocomplete': 'list',
-      'aria-owns': `butane-combobox-${this.id}`,
-    });
-    const selectedIndex = this.select.options[this.select.selectedIndex];
-    if (selectedIndex.hasAttribute('selected')) {
-      this.input.value = selectedIndex.innerText;
-    } else {
-      this.select.value = '';
+  handleKeydown(e) {
+    switch (e.code) {
+      case 'Escape':
+        this.onOptionEscape();
+        break;
+      case 'ArrowDown':
+        this.onOptionArrowDown(e);
+        break;
+      case 'ArrowUp':
+        this.onOptionArrowUp(e);
+        break;
+      case 'Space':
+      case 'Enter':
+        this.onOptionSelect(e);
+        break;
+      case 'Tab':
+        this.onOptionTab();
+        break;
+      default:
     }
   }
 
-  createList() {
-    this.list = document.createElement('ul');
-    setAttributes(this.list, {
-      'data-butane-combobox-list': '',
-      role: 'listbox',
-      id: `butane-combobox-${this.id}`,
-    });
-    this.list.setAttribute('hidden', 'true');
+  onOptionEscape() {
+    if (this.menuIsVisible) {
+      this.hideMenu();
+      this.input.focus();
+    }
   }
 
-  createStatus() {
-    this.status = document.createElement('div');
-    setAttributes(this.status, {
-      'data-butane-combobox-status': '',
-      'aria-live': 'polite',
-      role: 'status',
-    });
-    visuallyHide(this.status);
+  onOptionArrowDown(e) {
+    if (e.target.closest('[data-butane-combobox-input]')) {
+      e.preventDefault();
+      if (!this.menuIsVisible) this.showMenu();
+      this.focusFirstOption();
+    } else if (e.target.closest('[data-butane-combobox-option]')) {
+      e.preventDefault();
+      this.focusNextOption(e.target);
+    }
+  }
+
+  onOptionArrowUp(e) {
+    if (e.target.closest('[data-butane-combobox-option]') && this.menuIsVisible) {
+      this.focusPreviousOption(e.target);
+    }
+  }
+
+  onOptionSelect(e) {
+    if (e.target.closest('[data-butane-combobox-option]') && this.menuIsVisible) {
+      e.preventDefault();
+      this.setSelectedOption(e.target);
+      this.hideMenu();
+      this.input.focus();
+    }
+  }
+
+  onOptionTab() {
+    if (this.menuIsVisible) {
+      this.hideMenu();
+    }
   }
 
   showMenu() {
     this.renderMenuItems();
     this.input.setAttribute('aria-expanded', 'true');
     this.list.removeAttribute('hidden');
-    if (this.config.onShowMenu) {
-      this.config.onShowMenu();
-    }
+    if (this.config.onShowMenu) this.config.onShowMenu();
   }
 
   hideMenu() {
     this.input.setAttribute('aria-expanded', 'false');
     this.list.setAttribute('hidden', 'true');
-    if (this.config.onHideMenu) {
-      this.config.onHideMenu();
-    }
+    if (this.config.onHideMenu) this.config.onHideMenu();
   }
 
   setSelectedOption(option) {
@@ -204,15 +197,10 @@ class ButaneCombobox {
       child.setAttribute('aria-selected', child === option ? 'true' : 'false'),
     );
     this.input.value = option.innerText;
-    this.select.value = option.innerText;
     this.select
-      .querySelector(
-        `[value="${option.getAttribute('data-butane-combobox-option-value')}"]`,
-      )
+      .querySelector(`[value="${option.getAttribute('data-butane-combobox-option-value')}"]`)
       .setAttribute('selected', 'true');
-    if (this.config.onSelectedOption) {
-      this.config.onSelectedOption(option);
-    }
+    if (this.config.onSelectedOption) this.config.onSelectedOption(option);
   }
 
   focusFirstOption() {
@@ -239,11 +227,7 @@ class ButaneCombobox {
     }
   }
 
-  setInputValue(value) {
-    this.input.value = value;
-  }
-
-  updateStatus() {
+  updateStatusText() {
     if (this.filteredOptions.length === 0) {
       this.status.innerText = 'No results.';
     } else {
@@ -265,9 +249,7 @@ class ButaneCombobox {
   optionTemplate(option) {
     return `<li data-butane-combobox-option tabindex="-1" aria-selected="${
       this.input.value === option.innerText ? true : false
-    }" role="option" data-butane-combobox-option-value="${option.value}">${
-      option.label
-    }</li>`;
+    }" role="option" data-butane-combobox-option-value="${option.value}">${option.label}</li>`;
   }
 
   renderMenuItems() {
@@ -282,11 +264,19 @@ class ButaneCombobox {
     } else {
       this.list.innerHTML = this.noOptionsTemplate();
     }
-    this.updateStatus();
+    this.updateStatusText();
   }
 
-  get menuIsVisible() {
-    return this.list.getAttribute('hidden') ? false : true;
+  dispose() {
+    this.removeEventListeners();
+    this.wrapper.removeChild(this.input);
+    this.wrapper.removeChild(this.list);
+    this.wrapper.removeChild(this.status);
+    this.container.removeChild(this.wrapper);
+    this.select.removeAttribute('style');
+    this.select.removeAttribute('aria-hidden');
+    this.select.removeAttribute('tabindex');
+    this.select.setAttribute('id', this.id);
   }
 }
 
