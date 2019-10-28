@@ -23,7 +23,7 @@ $ npm install butane-combobox --save
 ```
 
 ```js
-import ButaneCombobox from 'butane-combobox;
+import ButaneCombobox from 'butane-combobox';
 const element = document.querySelector('.combobox');
 new ButaneCombobox(element);
 ```
